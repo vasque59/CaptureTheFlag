@@ -32,6 +32,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     double latitude;
     double longitude;
     boolean carryFlag;
+    boolean start = false;
     int myTeam;
     String My_name;
 
@@ -173,6 +174,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         redFlags.add(new Flag(42.727823, -84.484904));
         redFlags.add(new Flag(42.721028, -84.488552));
 
+        start = true;
+
 
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(new LatLng(42.724934, -84.481098));// EB, Red base
@@ -232,6 +235,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
     private void updateLocation(){
         mMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,longitude) , 14.0f) );
+        if(start)
+            updateFlags();
         if(!carryFlag) {
             if(player_marker != null) {
                 player_marker.remove();
@@ -254,20 +259,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     blueFlags.get(i).setCarried(true);
                     if(player_marker != null)
                         player_marker.remove();
-                    if(i == 0){
+                    if(i == 0 && blue_flag_1_marker != null){
                         blue_flag_1_marker.remove();
                     }
-                    else if(i == 1){
+                    else if(i == 1 && blue_flag_2_marker != null){
                         blue_flag_2_marker.remove();
                     }
-                    else{
+                    else if(i == 2 && blue_flag_3_marker != null){
                         blue_flag_3_marker.remove();
                     }
                     player_marker = addFlag(player,latitude, longitude, myTeam);
                 }
-                else if(calculateDistanceInMeter(latitude,longitude,redFlags.get(i).getLatitude(),redFlags.get(i).getLongitude()) < 15 && redFlags.get(i).isCarried() && !redFlags.get(i).isDelivered() && !carryFlag){
+                else if(calculateDistanceInMeter(latitude,longitude,redFlags.get(i).getLatitude(),redFlags.get(i).getLongitude()) < 15 && redFlags.get(i).isCarried() && !redFlags.get(i).isDelivered()){
                     redFlags.get(i).reset();
-                    //Notify opponent's flag has been reset. Change back his icon.
+                    if(player_marker != null)
+                        player_marker.remove();
+                    player_marker = addFlag(player,latitude, longitude, myTeam + 2);
+                    if(i == 0 && red_flag_1_marker != null){
+                        red_flag_1_marker.remove();
+                        red_flag_1_marker = addFlag(blue_flag_1,42.734182, -84.482822,0);//MSU Union
+                    }
+                    else if(i == 1 && red_flag_2_marker != null){
+                        red_flag_2_marker.remove();
+                        red_flag_2_marker = addFlag(blue_flag_2,42.730864, -84.483202,0);//library
+
+                    }
+                    else if(i == 2 && red_flag_3_marker != null){
+                        red_flag_3_marker.remove();
+                        red_flag_3_marker = addFlag(blue_flag_3,42.728318, -84.492370,0);//Breslin Center
+                    }
+
+                    //Notify opponent's flag has been reset. Change back his flag icon.
                 }
             }
             //close to blue flag, pick it up
@@ -280,11 +302,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     redFlags.get(i).setCarried(true);
                     if(player_marker != null)
                         player_marker.remove();
+                    if(i == 0 && red_flag_1_marker != null){
+                        red_flag_1_marker.remove();
+                    }
+                    else if(i == 1 && red_flag_2_marker != null){
+                        red_flag_2_marker.remove();
+                    }
+                    else if(i == 2 && red_flag_3_marker != null){
+                        red_flag_3_marker.remove();
+                    }
                     player_marker = addFlag(player,latitude, longitude, myTeam);
                 }
-                else if(calculateDistanceInMeter(latitude,longitude,blueFlags.get(i).getLatitude(),blueFlags.get(i).getLongitude()) < 15 && blueFlags.get(i).isCarried() && !blueFlags.get(i).isDelivered() && !carryFlag){
+                else if(calculateDistanceInMeter(latitude,longitude,blueFlags.get(i).getLatitude(),blueFlags.get(i).getLongitude()) < 15 && blueFlags.get(i).isCarried() && !blueFlags.get(i).isDelivered()){
                     blueFlags.get(i).reset();
-                    //Notify opponent's flag has been reset. Change back his icon.
+                    //Notify opponent's flag has been reset. Change back his flag icon.
+                    if(player_marker != null)
+                        player_marker.remove();
+                    player_marker = addFlag(player,latitude, longitude, myTeam + 2);
+                    if(i == 0 && blue_flag_1_marker != null){
+                        blue_flag_1_marker.remove();
+                        blue_flag_1_marker = addFlag(blue_flag_1,42.734182, -84.482822,0);//MSU Union
+                    }
+                    else if(i == 1 && blue_flag_2_marker != null){
+                        blue_flag_2_marker.remove();
+                        blue_flag_2_marker = addFlag(blue_flag_2,42.730864, -84.483202,0);//library
+
+                    }
+                    else if(i == 2 && blue_flag_3_marker != null){
+                        blue_flag_3_marker.remove();
+                        blue_flag_3_marker = addFlag(blue_flag_3,42.728318, -84.492370,0);//Breslin Center
+                    }
                 }
             }
             //close to red flag, pick it up
