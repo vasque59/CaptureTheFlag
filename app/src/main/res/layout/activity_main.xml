@@ -46,13 +46,13 @@
         android:layout_marginTop="37dp">
 
         <Button
-            android:text="@string/okay"
-            android:layout_height="wrap_content"
             android:id="@+id/okayButton"
-            android:paddingStart="36dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onOkey"
             android:paddingEnd="36dp"
-            android:onClick="onOkay"
-            android:layout_width="match_parent" />
+            android:paddingStart="36dp"
+            android:text="@string/okay" />
 
         <Button
             android:text="@string/cancel"
