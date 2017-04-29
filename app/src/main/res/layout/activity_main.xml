@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:text="@string/join"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/createAccount"
+        android:textSize="24sp"
+        android:layout_marginBottom="10dp"
+        android:layout_centerHorizontal="true" />
+
+    <LinearLayout
+        android:id="@+id/usernameLayout"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/createAccount"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="19dp">
+
+        <TextView
+            android:text="@string/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/username"
+            android:textSize="24sp" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/usernameEditText" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/buttonsLayout"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/usernameLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="37dp">
+
+        <Button
+            android:text="@string/okay"
+            android:layout_height="wrap_content"
+            android:id="@+id/okayButton"
+            android:paddingStart="36dp"
+            android:paddingEnd="36dp"
+            android:onClick="onOkay"
+            android:layout_width="match_parent" />
+
+        <Button
+            android:text="@string/cancel"
+            android:layout_height="wrap_content"
+            android:id="@+id/cancelButton"
+            android:paddingStart="36dp"
+            android:paddingEnd="36dp"
+            android:onClick="onCancel"
+            android:layout_width="wrap_content" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

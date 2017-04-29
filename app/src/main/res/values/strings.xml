@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Capture The Flag - Team 2</string>
+    <string name="username">Username</string>
+    <string name="join">Join Game</string>
+    <string name="okay">Okay</string>
+    <string name="cancel">Cancel</string>
+    <!--samples-->
+    <string name="name_of_loser">INSERT LOSER</string>
+    <string name="name_of_winner">INSERT WINNER</string>
+    <string name="sampletext">SAMPLE TEXT</string>
+    <string name="create_account">Create Account</string>
+    <string name="title_activity_maps">Capture The Flag</string>
+    <string name="back_to_current_pos_btn">Your position</string>
+    <string name="Base_pos_btn">Base Position</string>
+    <!--Checkboxes-->
+    <string name="done_btn">Done</string>
+    <string name="surrender_btn">  Surrender  </string>
+    <string name="undo_btn">Undo</string>
+</resources>
