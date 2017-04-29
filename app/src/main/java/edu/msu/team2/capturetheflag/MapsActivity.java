@@ -278,6 +278,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         blue_flag_3_marker.remove();
                     }
                     player_marker = addFlag(player,latitude, longitude, myTeam);
+                    message.setText("Congratulation! Tianyi, you just picked up a flag!");
                 }
                 else if(calculateDistanceInMeter(latitude,longitude,redFlags.get(i).getLatitude(),redFlags.get(i).getLongitude()) < 200 && redFlags.get(i).isCarried() && !redFlags.get(i).isDelivered()){
                     redFlags.get(i).reset();
@@ -297,8 +298,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         red_flag_3_marker.remove();
                         red_flag_3_marker = addFlag(blue_flag_3,42.728318, -84.492370,0);//Breslin Center
                     }
-
+                    message.setText("Congratulation! Tianyi, you just reset your opponent's flag!");
                     //Notify opponent's flag has been reset. Change back his flag icon.
+                }
+                // blue deliver a flag
+                else if(calculateDistanceInMeter(latitude,longitude,42.731491, -84.495263) < 230 && carryFlag && blueFlags.get(i).isCarried() && !blueFlags.get(i).isDelivered()){
+                    carryFlag = false;
+                    blueFlags.get(i).setCarried(false);
+                    blueFlags.get(i).setDelivered(true);
+                    if(player_marker != null) {
+                        player_marker.remove();
+                    }
+                    player_marker = addFlag(player,latitude, longitude, myTeam + 2);
+                    message.setText("Congratulation! Tianyi, you just delivered a flag!");
                 }
             }
             //close to blue flag, pick it up
