@@ -241,6 +241,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,longitude) , 14.0f) );
         if(start)
             updateFlags();
+            detectWin();
         if(!carryFlag) {
             if(player_marker != null) {
                 player_marker.remove();
@@ -359,6 +360,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+
+    private void detectWin(){
+        int blue_win = 0;
+        int red_win = 0;
+        for(int i = 0; i < 3; i++){
+            if(redFlags.get(i).isDelivered()){
+                blue_win ++;
+            }
+            else if(redFlags.get(i).isDelivered()){
+                red_win ++;
+            }
+        }
+        if(blue_win == 3){
+            //go to winner activity
+            message.setText("Blue team wins");
+        }
+        else if(red_win == 3){
+            //go to winner activity
+            message.setText("Red team wins");
+        }
+    }
     /**
      * color = 0,1,2,or 3
      * 0 means blue flag,
