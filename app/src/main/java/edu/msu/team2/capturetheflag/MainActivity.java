@@ -24,6 +24,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onCancel(View view){
-
+        onBackPressed();
     }
 }

@@ -188,7 +188,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(markerOptions);
 
         markerOptions.position(new LatLng(42.731491, -84.495263));// Brody, Blue base
-        markerOptions.title("Red Team Base");
+        markerOptions.title("Blue Team Base");
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizedBlueHome));
         mMap.addMarker(markerOptions);
 
@@ -239,9 +239,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
     private void updateLocation(){
         mMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,longitude) , 14.0f) );
-        if(start)
+        if(start) {
             updateFlags();
             detectWin();
+        }
         if(!carryFlag) {
             if(player_marker != null) {
                 player_marker.remove();
@@ -365,7 +366,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         int blue_win = 0;
         int red_win = 0;
         for(int i = 0; i < 3; i++){
-            if(redFlags.get(i).isDelivered()){
+            if(blueFlags.get(i).isDelivered()){
                 blue_win ++;
             }
             else if(redFlags.get(i).isDelivered()){
@@ -375,10 +376,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(blue_win == 3){
             //go to winner activity
             message.setText("Blue team wins");
+            unregisterListeners();
         }
         else if(red_win == 3){
             //go to winner activity
             message.setText("Red team wins");
+            unregisterListeners();
         }
     }
     /**
@@ -415,6 +418,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //intent.putExtra(WINNING_PLAYER_NAME_BUNDLE_KEY, "test");
        // intent.putExtra(LOSING_PLAYER_NAME_BUNDLE_KEY, "test");
         //startActivity(intent);
+        //go to surrender.
     }
     public void onBtnYour_pos(View view) {
         mMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,longitude) , 14.0f) );
