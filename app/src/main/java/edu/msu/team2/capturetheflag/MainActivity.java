@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         return (EditText)findViewById(R.id.usernameEditText);
     }
 
-    public void onOkey(View view){
+    public void onOkay(View view){
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
     }

@@ -231,8 +231,8 @@ public class Cloud {
         }
     }
 
-    public InputStream createAccount(final String user, final String pw, final String pw2) {
-        String query = CREATE_URL + "?user=" + user + "&pw=" + pw + "&pw2=" + pw2;
+    public InputStream createAccount(final String user) {
+        String query = CREATE_URL + "?user=" + user;
 
         try {
             URL url = new URL(query);
