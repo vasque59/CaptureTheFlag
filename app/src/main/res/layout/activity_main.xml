@@ -49,7 +49,7 @@
             android:id="@+id/okayButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="onOkey"
+            android:onClick="onOkay"
             android:paddingEnd="36dp"
             android:paddingStart="36dp"
             android:text="@string/okay" />
