@@ -1,7 +1,9 @@
 package edu.msu.team2.capturetheflag;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -431,12 +433,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return m;
     }
 
-    public void onBtnSurrender(View view) {
-        //Intent intent = new Intent(this, WinnerActivity.class);
-        //intent.putExtra(WINNING_PLAYER_NAME_BUNDLE_KEY, "test");
-       // intent.putExtra(LOSING_PLAYER_NAME_BUNDLE_KEY, "test");
-        //startActivity(intent);
-        //go to surrender.
+    @Override
+    public void onBackPressed(){
+
+    }
+
+    public void onBtnSurrender(final View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+        builder.setTitle(R.string.surrender_btn);
+        builder.setMessage(R.string.quit_message);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                unregisterListeners();
+                finish();
+                System.exit(0);
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+        builder.setIcon(android.R.drawable.ic_dialog_alert);
+        builder.show();
     }
     public void onBtnYour_pos(View view) {
         mMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,longitude) , 14.0f) );
