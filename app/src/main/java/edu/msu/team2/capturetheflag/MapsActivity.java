@@ -108,6 +108,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         carryFlag = false;
         message = (TextView) findViewById(R.id.Message_label);
+        savedInstanceState = getIntent().getExtras();
+        if(savedInstanceState != null)
+            My_name = savedInstanceState.getString("name");
         /**
          * Add images
          * Resize those image to make it display accurate and clear.
@@ -124,7 +127,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         resizedRedFlag = Bitmap.createScaledBitmap(redFlag, 64, 64, false);
         Bitmap blueFlag = BitmapFactory.decodeResource(getResources(), R.drawable.blueflag);
         resizedBlueFlag = Bitmap.createScaledBitmap(blueFlag, 64, 64, false);
-        myTeam = 1;
+        myTeam = 0;
 
 
         /**
@@ -133,7 +136,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
          *
          * get Names from cloud/last activity.
          * **/
-        //My_name == getExtra().......
         /*
         if(){
             myTeam = 0; // blue
@@ -142,6 +144,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             myTeam = 1; // red
         }
         */
+        if(myTeam == 1)
+            message.setText(getResources().getString(R.string.hi) + My_name + getResources().getString(R.string.redTeam));
+        else
+            message.setText(getResources().getString(R.string.hi) + My_name + getResources().getString(R.string.blueTeam));
     }
 
 
@@ -183,12 +189,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(new LatLng(42.724934, -84.481098));// EB, Red base
-        markerOptions.title("Red Team Base");
+        markerOptions.title(getResources().getString(R.string.Red_base));
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizedRedHome));
         mMap.addMarker(markerOptions);
 
         markerOptions.position(new LatLng(42.731491, -84.495263));// Brody, Blue base
-        markerOptions.title("Blue Team Base");
+        markerOptions.title(getResources().getString(R.string.Blue_base));
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizedBlueHome));
         mMap.addMarker(markerOptions);
 
@@ -263,7 +269,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void updateFlags(){
         if(myTeam == 0){  //blue
             for(int i = 0; i < 3; i++){
-                if(calculateDistanceInMeter(latitude,longitude,blueFlags.get(i).getLatitude(),blueFlags.get(i).getLongitude()) < 200 && !blueFlags.get(i).isCarried() && !blueFlags.get(i).isDelivered() && !carryFlag){
+                if(calculateDistanceInMeter(latitude,longitude,blueFlags.get(i).getLatitude(),blueFlags.get(i).getLongitude()) < 120 && !blueFlags.get(i).isCarried() && !blueFlags.get(i).isDelivered() && !carryFlag){
                     carryFlag = true;
                     blueFlags.get(i).setCarried(true);
                     if(player_marker != null)
@@ -278,9 +284,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         blue_flag_3_marker.remove();
                     }
                     player_marker = addFlag(player,latitude, longitude, myTeam);
-                    message.setText("Congratulation! Tianyi, you just picked up a flag!");
+                    message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.pick));
                 }
-                else if(calculateDistanceInMeter(latitude,longitude,redFlags.get(i).getLatitude(),redFlags.get(i).getLongitude()) < 200 && redFlags.get(i).isCarried() && !redFlags.get(i).isDelivered()){
+                else if(calculateDistanceInMeter(latitude,longitude,redFlags.get(i).getLatitude(),redFlags.get(i).getLongitude()) < 120 && redFlags.get(i).isCarried() && !redFlags.get(i).isDelivered()){
                     redFlags.get(i).reset();
                     if(player_marker != null)
                         player_marker.remove();
@@ -298,11 +304,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         red_flag_3_marker.remove();
                         red_flag_3_marker = addFlag(blue_flag_3,42.728318, -84.492370,0);//Breslin Center
                     }
-                    message.setText("Congratulation! Tianyi, you just reset your opponent's flag!");
+                    message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.reset));
                     //Notify opponent's flag has been reset. Change back his flag icon.
                 }
                 // blue deliver a flag
-                else if(calculateDistanceInMeter(latitude,longitude,42.731491, -84.495263) < 230 && carryFlag && blueFlags.get(i).isCarried() && !blueFlags.get(i).isDelivered()){
+                else if(calculateDistanceInMeter(latitude,longitude,42.731491, -84.495263) < 120 && carryFlag && blueFlags.get(i).isCarried() && !blueFlags.get(i).isDelivered()){
                     carryFlag = false;
                     blueFlags.get(i).setCarried(false);
                     blueFlags.get(i).setDelivered(true);
@@ -310,7 +316,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         player_marker.remove();
                     }
                     player_marker = addFlag(player,latitude, longitude, myTeam + 2);
-                    message.setText("Congratulation! Tianyi, you just delivered a flag!");
+                    message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.deliver));
                 }
             }
             //close to blue flag, pick it up
@@ -318,7 +324,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         else{ // you are red
             for(int i = 0; i < 3; i++){
-                if(calculateDistanceInMeter(latitude,longitude,redFlags.get(i).getLatitude(),redFlags.get(i).getLongitude()) < 200 && !redFlags.get(i).isCarried() && !redFlags.get(i).isDelivered() && !carryFlag){
+                if(calculateDistanceInMeter(latitude,longitude,redFlags.get(i).getLatitude(),redFlags.get(i).getLongitude()) < 120 && !redFlags.get(i).isCarried() && !redFlags.get(i).isDelivered() && !carryFlag){
                     carryFlag = true;
                     redFlags.get(i).setCarried(true);
                     if(player_marker != null)
@@ -333,9 +339,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         red_flag_3_marker.remove();
                     }
                     player_marker = addFlag(player,latitude, longitude, myTeam);
-                    message.setText("Congratulation! Tianyi, you just picked up a flag!");
+                    message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.pick));
                 }
-                else if(calculateDistanceInMeter(latitude,longitude,blueFlags.get(i).getLatitude(),blueFlags.get(i).getLongitude()) < 200 && blueFlags.get(i).isCarried() && !blueFlags.get(i).isDelivered()){
+                else if(calculateDistanceInMeter(latitude,longitude,blueFlags.get(i).getLatitude(),blueFlags.get(i).getLongitude()) < 120 && blueFlags.get(i).isCarried() && !blueFlags.get(i).isDelivered()){
                     blueFlags.get(i).reset();
                     //Notify opponent's flag has been reset. Change back his flag icon.
                     if(player_marker != null)
@@ -354,9 +360,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         blue_flag_3_marker.remove();
                         blue_flag_3_marker = addFlag(blue_flag_3,42.728318, -84.492370,0);//Breslin Center
                     }
-                    message.setText("Congratulation! Tianyi, you just reset your opponent's flag!");
+                    message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.reset));
                 }
-                else if(calculateDistanceInMeter(latitude,longitude,42.724934, -84.481098) < 230 && carryFlag && redFlags.get(i).isCarried() && !redFlags.get(i).isDelivered()){
+                else if(calculateDistanceInMeter(latitude,longitude,42.724934, -84.481098) < 120 && carryFlag && redFlags.get(i).isCarried() && !redFlags.get(i).isDelivered()){
                     carryFlag = false;
                     redFlags.get(i).setCarried(false);
                     redFlags.get(i).setDelivered(true);
@@ -364,7 +370,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         player_marker.remove();
                     }
                     player_marker = addFlag(player,latitude, longitude, myTeam + 2);
-                    message.setText("Congratulation! Tianyi, you just delivered a flag!");
+                    message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.deliver));
                 }
             }
             //close to red flag, pick it up
@@ -387,12 +393,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         if(blue_win == 3){
             //go to winner activity
-            message.setText("Blue team wins");
+            message.setText(getResources().getString(R.string.blueWin));
             unregisterListeners();
         }
         else if(red_win == 3){
             //go to winner activity
-            message.setText("Red team wins");
+            message.setText(getResources().getString(R.string.redWin));
             unregisterListeners();
         }
     }
@@ -406,19 +412,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker addFlag(MarkerOptions flag, double la, double lon, int color){
         flag.position(new LatLng(la,lon));
         if(color == 0) {
-            flag.title("Blue Flag");
+            flag.title(getResources().getString(R.string.blueFlag));
             flag.icon(BitmapDescriptorFactory.fromBitmap(resizedBlueFlag));
         }
         else if(color == 1){
-            flag.title("Red Flag");
+            flag.title(getResources().getString(R.string.redFlag));
             flag.icon(BitmapDescriptorFactory.fromBitmap(resizedRedFlag));
         }
         else if(color == 2){
-            flag.title("Yourself");
+            flag.title(getResources().getString(R.string.yourself));
             flag.icon(BitmapDescriptorFactory.fromBitmap(resizedBluePerson));
         }
         else if(color == 3){
-            flag.title("Yourself");
+            flag.title(getResources().getString(R.string.yourself));
             flag.icon(BitmapDescriptorFactory.fromBitmap(resizedRedPerson));
         }
         Marker m = mMap.addMarker(flag);

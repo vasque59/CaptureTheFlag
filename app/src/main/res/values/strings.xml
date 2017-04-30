@@ -14,6 +14,19 @@
     <string name="Base_pos_btn">Base Position</string>
     <!--Checkboxes-->
     <string name="done_btn">Done</string>
-    <string name="surrender_btn">  Surrender  </string>
-    <string name="undo_btn">Undo</string>
+    <string name="surrender_btn">Surrender</string>
+    <string name="Red_base">Red Team Base</string>
+    <string name="Blue_base">Blue Team Base</string>
+    <string name="cong">Congratulation!\u0020</string>
+    <string name="pick">, you just picked up a flag!</string>
+    <string name="reset">, you just reset your opponent\'s flag!</string>
+    <string name="deliver">, you just delivered a flag!</string>
+    <string name="blueWin">Blue team wins!</string>
+    <string name="redWin">Red team wins!</string>
+    <string name="blueFlag">Blue Flag</string>
+    <string name="redFlag">Red Flag</string>
+    <string name="yourself">Yourself</string>
+    <string name="hi">Hi,\u0020</string>
+    <string name="redTeam">, you are on red team!</string>
+    <string name="blueTeam">, you are on blue team!</string>
 </resources>
