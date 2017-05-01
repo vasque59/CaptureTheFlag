@@ -30,4 +30,7 @@
     <string name="redTeam">, you are on red team!</string>
     <string name="blueTeam">, you are on blue team!</string>
     <string name="quit_message">Are you sure you want to quit? Your teammates need you!</string>
+    <string name="loginfail">unable to create user</string>
+
+
 </resources>

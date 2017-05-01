@@ -1,3 +1,4 @@
+
 package edu.msu.team2.capturetheflag;
 
 import android.util.Log;
@@ -19,12 +20,14 @@ import java.net.URLEncoder;
 
 public class Cloud {
 
-    private static final String CREATE_URL = "https://webdev.cse.msu.edu/~vasque59/cse476/project1/game-create.php";
-    private static final String INIT_GAME = "https://webdev.cse.msu.edu/~vasque59/cse476/project1/game-init.php";
-    private static final String SAVE_URL = "https://webdev.cse.msu.edu/~vasque59/cse476/project1/game-save.php";
-    private static final String WIN_URL  = "https://webdev.cse.msu.edu/~vasque59/cse476/project1/game-win.php";
-    private static final String DELETE_URL  = "https://webdev.cse.msu.edu/~vasque59/cse476/project1/game-delete.php";
-    private static final String HARD_DELETE_URL  = "https://webdev.cse.msu.edu/~vasque59/cse476/project1/game-hard-delete.php";
+    private static final String CREATE_URL = "https://webdev.cse.msu.edu/~vasque59/cse476/project3/game-createuser.php";
+    private static final String INIT_GAME = "http://webdev.cse.msu.edu/~vasque59/cse476/project3/game-creategame.php";
+    private static final String UPDATE_URL = "https://webdev.cse.msu.edu/~vasque59/cse476/project3/game-updateflag.php";
+    private static final String SCORE_URL  = "https://webdev.cse.msu.edu/~vasque59/cse476/project3/game-scorepoint.php";
+    private static final String GETSCORE_URL  = "https://webdev.cse.msu.edu/~vasque59/cse476/project3/game-getpoints.php";
+    private static final String DELETE_URL  = "https://webdev.cse.msu.edu/~vasque59/cse476/project3/game-delete.php";
+    private static final String RESET_URL  = "https://webdev.cse.msu.edu/~vasque59/cse476/project3/game-resetflag.php";
+    private static final String OPFLAG_URL  = "https://webdev.cse.msu.edu/~vasque59/cse476/project3/game-getopponentsteamflagloc.php";
     private static final String UTF8 = "UTF-8";
 
     /**
@@ -48,10 +51,56 @@ public class Cloud {
                 tag != XmlPullParser.END_DOCUMENT);
     }
 
-
-    public InputStream winGame(final String user, final String gameid) {
+    public InputStream updateFagLoc(final String lat, final String flong,final String teamID) {
         // Create a get query
-        String query = WIN_URL + "?gameid=" + gameid + "&user=" + user;
+        String query = UPDATE_URL + "?flagLat=" + lat + "&flagLong=" + flong + "&teamid=" + teamID;
+
+        try {
+            URL url = new URL(query);
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            int responseCode = conn.getResponseCode();
+            if(responseCode != HttpURLConnection.HTTP_OK) {
+                return null;
+            }
+
+            return conn.getInputStream();
+
+        } catch (MalformedURLException e) {
+            // Should never happen
+            return null;
+        } catch (IOException ex) {
+            return null;
+        }
+    }
+
+
+    public InputStream score(final String teamID) {
+        // Create a get query
+        String query = SCORE_URL + "?teamid=" + teamID;
+
+        try {
+            URL url = new URL(query);
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            int responseCode = conn.getResponseCode();
+            if(responseCode != HttpURLConnection.HTTP_OK) {
+                return null;
+            }
+
+            return conn.getInputStream();
+
+        } catch (MalformedURLException e) {
+            // Should never happen
+            return null;
+        } catch (IOException ex) {
+            return null;
+        }
+    }
+
+    public InputStream getPoints(final String teamID) {
+        // Create a get query
+        String query = GETSCORE_URL + "?teamid=" + teamID;
 
         try {
             URL url = new URL(query);
@@ -77,9 +126,9 @@ public class Cloud {
      * Open a connection to a hatting in the cloud.
      * @return reference to an input stream or null if this fails
      */
-    public InputStream deleteFromCloud(final String game, final String userid) {
+    public InputStream deleteFromCloud() {
         // Create a get query
-        String query = DELETE_URL + "?gameid=" + game + "&user=" + userid;
+        String query = DELETE_URL;
 
         try {
             URL url = new URL(query);
@@ -100,98 +149,28 @@ public class Cloud {
         }
     }
 
-    public boolean save(final String xmlStr, final String gameid) {
-        /*
-         * Convert the XML into HTTP POST data
-         */
-        String postDataStr;
-        try {
-            postDataStr = "xml=" + URLEncoder.encode(xmlStr, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            return false;
-        }
-
-
-        /*
-         * Send the data to the server
-         */
-        byte[] postData = postDataStr.getBytes();
-
-        InputStream stream = null;
-        // Create a get query
-        String query = SAVE_URL + "?gameid=" + gameid;
+    public InputStream resetFlag(final String lat1, final String long1,final String lat2, final String long2) {
+        String query = RESET_URL + "?flagLat1=" + lat1 + "&flagLong1=" + long1 + "&flagLat2=" + lat2 + "&flagLong2=" + long2;
 
         try {
             URL url = new URL(query);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-            conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Length", Integer.toString(postData.length));
-            conn.setUseCaches(false);
-
-            OutputStream out = conn.getOutputStream();
-            out.write(postData);
-            out.close();
-
             int responseCode = conn.getResponseCode();
-            if(responseCode != HttpURLConnection.HTTP_OK) {
-                return false;
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                return null;
             }
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                Log.i("hatter", line);
-            }
-            stream = conn.getInputStream();
-
-            /**
-             * Create an XML parser for the result
-             */
-            try {
-                XmlPullParser xmlR = Xml.newPullParser();
-                xmlR.setInput(stream, UTF8);
-
-                xmlR.nextTag();      // Advance to first tag
-                xmlR.require(XmlPullParser.START_TAG, null, "game");
-
-                String status = xmlR.getAttributeValue(null, "status");
-                if(status.equals("no")) {
-                    return false;
-                }
-
-                // We are done
-            } catch(XmlPullParserException ex) {
-                return false;
-            } catch(IOException ex) {
-                return false;
-            }
-
-
-
-
+            return conn.getInputStream();
         } catch (MalformedURLException e) {
-            return false;
+            return null;
         } catch (IOException ex) {
-            return false;
-        } finally {
-            if(stream != null) {
-                try {
-                    stream.close();
-                } catch(IOException ex) {
-                    // Fail silently
-                }
-            }
+            return null;
         }
-
-        return true;
-
     }
 
-    public InputStream hardDelete(final String game) {
-        String query = HARD_DELETE_URL + "?gameid=" + game;
+    public InputStream getOpFlag(final String lat, final String longi,final String resetlat, final String resetlong) {
+        String query = OPFLAG_URL + "?flagLat=" + lat + "&flagLong=" + longi + "&resetFlagLat=" + resetlat + "&resetFlagLong2=" + resetlong;
 
         try {
             URL url = new URL(query);
@@ -211,8 +190,14 @@ public class Cloud {
     }
 
 
-    public InputStream initGame(final String game) {
-        String query = INIT_GAME + "?gameid=" + game;
+
+    public InputStream initGame(final String lat1, final String long1,final String lat2, final String long2) {
+        String query = INIT_GAME + "?flagLat1=" + lat1 + "&flagLong1=" + long1 + "&flagLat2=" + lat2 + "&flagLong2=" + long2;
+
+                //"http://webdev.cse.msu.edu/~vasque59/cse476/project3/game-creategame.php?flagLat1=1&flagLong1=1&flagLat2=1&flagLong2=1";
+
+                //
+
 
         try {
             URL url = new URL(query);

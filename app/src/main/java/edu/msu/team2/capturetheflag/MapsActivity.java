@@ -114,7 +114,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         message = (TextView) findViewById(R.id.Message_label);
         savedInstanceState = getIntent().getExtras();
         if(savedInstanceState != null)
-            My_name = savedInstanceState.getString("name");
+            My_name = getIntent().getStringExtra("name");
         /**
          * Add images
          * Resize those image to make it display accurate and clear.
@@ -131,7 +131,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         resizedRedFlag = Bitmap.createScaledBitmap(redFlag, 64, 64, false);
         Bitmap blueFlag = BitmapFactory.decodeResource(getResources(), R.drawable.blueflag);
         resizedBlueFlag = Bitmap.createScaledBitmap(blueFlag, 64, 64, false);
-        myTeam = 0;
+        myTeam  = Integer.valueOf(getIntent().getStringExtra("teamID"));
 
 
         /**
