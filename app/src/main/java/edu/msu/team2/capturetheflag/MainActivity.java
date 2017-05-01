@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                         String status = xml.getAttributeValue(null, "status");
-                        if (status.equals("created game")) {
+                        if (status.equals("game created")) {
 
                             fail = false;
                             // teamID = xml.getAttributeValue(null, "msg");
