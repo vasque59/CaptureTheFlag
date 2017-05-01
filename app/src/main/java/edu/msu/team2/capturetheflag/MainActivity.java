@@ -20,11 +20,11 @@ public class MainActivity extends AppCompatActivity {
 
     private String teamID;
 
-    private String team1lat  = "42.734182";
+    private String team1lat  = "42.734182";//blue
     private String team1long  = "-84.482822";//MSU Union
 
-    private String team2lat  = "42.730864";
-    private String team2long  = "-84.483202";//MSU Library
+    private String team2lat  = "42.721028";//red
+    private String team2long  = "-84.488552";//MSU Library
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,8 +98,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
-
 
 
     public void onCancel(View view) {
