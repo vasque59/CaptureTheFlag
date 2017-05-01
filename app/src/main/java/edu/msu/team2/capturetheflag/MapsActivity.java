@@ -374,6 +374,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // show only to yourself your current location
         }
         else{
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    cloud.updateFlagLoc(String.valueOf(latitude),String.valueOf(longitude),String.valueOf(myTeam));
+                }
+
+            }).start();
+
             if(player_marker != null) {
                 player_marker.remove();
             }
