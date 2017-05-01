@@ -237,134 +237,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(start) {
             updateFlags();
             detectWin();
-
-            //final int temp_score;
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Cloud cloud = new Cloud();
-                    InputStream stream = cloud.getPoints(String.valueOf(myTeam));
-
-                    boolean fail = stream == null;
-                    if (!fail) {
-                        try {
-                            XmlPullParser xml = Xml.newPullParser();
-                            xml.setInput(stream, "UTF-8");
-
-
-                            xml.nextTag();
-                            xml.require(XmlPullParser.START_TAG, null, "game");
-
-                            String temp = xml.getAttributeValue(null,"msg");
-                            temp_score = Integer.valueOf(temp);
-                        } catch (IOException | XmlPullParserException ex) {
-                            fail = true;
-                        } finally {
-                            try {
-                                stream.close();
-                            } catch (IOException ex) {
-                            }
-                        }
-                    }
-
-                }
-
-            }).start();
-
-
-            if(score != temp_score){
-                score = temp_score;
-                message.setText("Your team just get one point! You are now have " + score + "points." );
-            }
-
-
-            if(myTeam == 1 && redFlags.get(0).isCarried()) {//1 blue
-                //final int temp_score;
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Cloud cloud = new Cloud();
-                        InputStream stream = cloud.getOpFlag("1");
-
-                        boolean fail = stream == null;
-                        if (!fail) {
-                            try {
-                                XmlPullParser xml = Xml.newPullParser();
-                                xml.setInput(stream, "UTF-8");
-
-
-                                xml.nextTag();
-                                xml.require(XmlPullParser.START_TAG, null, "game");
-
-                                temp_lat = Double.valueOf(xml.getAttributeValue(null,"lat"));
-                                temp_long = Double.valueOf(xml.getAttributeValue(null,"long"));
-
-                            } catch (IOException | XmlPullParserException ex) {
-                                fail = true;
-                            } finally {
-                                try {
-                                    stream.close();
-                                } catch (IOException ex) {
-                                }
-                            }
-                        }
-
-                    }
-
-                }).start();
-
-                double opla = temp_lat;
-                double oplo = temp_long;
-                redFlags.get(0).setLatitude(opla);
-                redFlags.get(0).setLongitude(oplo);
-                if(red_flag_marker != null){
-                    red_flag_marker.remove();
-                }
-                red_flag_marker = addFlag(red_flag_1,opla,oplo,0);
-            }
-            if(myTeam == 2 && blueFlags.get(0).isCarried()) {//2 red
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Cloud cloud = new Cloud();
-                        InputStream stream = cloud.getOpFlag("2");
-
-                        boolean fail = stream == null;
-                        if (!fail) {
-                            try {
-                                XmlPullParser xml = Xml.newPullParser();
-                                xml.setInput(stream, "UTF-8");
-
-
-                                xml.nextTag();
-                                xml.require(XmlPullParser.START_TAG, null, "game");
-
-                                temp_lat = Double.valueOf(xml.getAttributeValue(null,"lat"));
-                                temp_long = Double.valueOf(xml.getAttributeValue(null,"long"));
-
-                            } catch (IOException | XmlPullParserException ex) {
-                                fail = true;
-                            } finally {
-                                try {
-                                    stream.close();
-                                } catch (IOException ex) {
-                                }
-                            }
-                        }
-
-                    }
-
-                }).start();
-                double opla = temp_lat;
-                double oplo = temp_long;
-                blueFlags.get(0).setLatitude(opla);
-                blueFlags.get(0).setLongitude(oplo);
-                if(blue_flag_marker != null){
-                    blue_flag_marker.remove();
-                }
-                blue_flag_marker = addFlag(blue_flag_1,opla,oplo,0);
-            }
+            drawOpponent();
         }
 
         if(!carryFlag) {
@@ -375,7 +248,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // show only to yourself your current location
         }
         else{
-
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -409,7 +281,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //If you carry the flag, your position shows to everybody.
         }
     }
-
 
     private void updateFlags(){
         if(myTeam == 1){  //blue
@@ -654,6 +525,137 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
         return (AVERAGE_RADIUS_OF_EARTH_KM * c) * 1000;
+    }
+
+    private void drawOpponent(){
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Cloud cloud = new Cloud();
+                InputStream stream = cloud.getPoints(String.valueOf(myTeam));
+
+                boolean fail = stream == null;
+                if (!fail) {
+                    try {
+                        XmlPullParser xml = Xml.newPullParser();
+                        xml.setInput(stream, "UTF-8");
+
+
+                        xml.nextTag();
+                        xml.require(XmlPullParser.START_TAG, null, "game");
+
+                        String temp = xml.getAttributeValue(null,"msg");
+                        temp_score = Integer.valueOf(temp);
+                    } catch (IOException | XmlPullParserException ex) {
+                        fail = true;
+                    } finally {
+                        try {
+                            stream.close();
+                        } catch (IOException ex) {
+                        }
+                    }
+                }
+
+            }
+
+        }).start();
+        // pulling points;
+
+
+        if(score != temp_score){
+            score = temp_score;
+            message.setText("Your team just get one point! You are now have " + score + "points." );
+        }
+
+
+
+        if(myTeam == 1) {//1 blue
+            //final int temp_score;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Cloud cloud = new Cloud();
+                    InputStream stream = cloud.getOpFlag("1");
+
+                    boolean fail = stream == null;
+                    if (!fail) {
+                        try {
+                            XmlPullParser xml = Xml.newPullParser();
+                            xml.setInput(stream, "UTF-8");
+
+
+                            xml.nextTag();
+                            xml.require(XmlPullParser.START_TAG, null, "game");
+
+                            temp_lat = Double.valueOf(xml.getAttributeValue(null,"lat"));
+                            temp_long = Double.valueOf(xml.getAttributeValue(null,"long"));
+
+                        } catch (IOException | XmlPullParserException ex) {
+                            fail = true;
+                        } finally {
+                            try {
+                                stream.close();
+                            } catch (IOException ex) {
+                            }
+                        }
+                    }
+
+                }
+            }).start();
+
+            double opla = temp_lat;
+            double oplo = temp_long;
+            redFlags.get(0).setLatitude(opla);
+            redFlags.get(0).setLongitude(oplo);
+            if(red_flag_marker != null){
+                red_flag_marker.remove();
+            }
+            red_flag_marker = addFlag(red_flag_1,opla,oplo,0);
+        }
+        if(myTeam == 2) {//2 red
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Cloud cloud = new Cloud();
+                    InputStream stream = cloud.getOpFlag("2");
+
+                    boolean fail = stream == null;
+                    if (!fail) {
+                        try {
+                            XmlPullParser xml = Xml.newPullParser();
+                            xml.setInput(stream, "UTF-8");
+
+
+                            xml.nextTag();
+                            xml.require(XmlPullParser.START_TAG, null, "game");
+
+                            temp_lat = Double.valueOf(xml.getAttributeValue(null,"lat"));
+                            temp_long = Double.valueOf(xml.getAttributeValue(null,"long"));
+
+                        } catch (IOException | XmlPullParserException ex) {
+                            fail = true;
+                        } finally {
+                            try {
+                                stream.close();
+                            } catch (IOException ex) {
+                            }
+                        }
+                    }
+
+                }
+
+            }).start();
+            double opla = temp_lat;
+            double oplo = temp_long;
+            blueFlags.get(0).setLatitude(opla);
+            blueFlags.get(0).setLongitude(oplo);
+            if(blue_flag_marker != null){
+                blue_flag_marker.remove();
+            }
+            blue_flag_marker = addFlag(blue_flag_1,opla,oplo,0);
+        }
     }
 
 }
