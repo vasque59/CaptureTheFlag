@@ -377,9 +377,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if(player_marker != null) {
                 player_marker.remove();
             }
-            player_marker = addFlag(player,latitude, longitude, myTeam - 1);
-            carrying.setLatitude(latitude);
-            carrying.setLongitude(longitude);
+            if(myTeam == 1) {//blue
+                player_marker = addFlag(player, latitude, longitude, myTeam - 1);
+                blueFlags.get(0).setLatitude(latitude);
+                blueFlags.get(0).setLongitude(longitude);
+            }
+            else if(myTeam == 2){
+                player_marker = addFlag(player, latitude, longitude, myTeam - 1);
+                redFlags.get(0).setLatitude(latitude);
+                redFlags.get(0).setLongitude(longitude);
+            }
 
             new Thread(new Runnable() {
                 @Override
