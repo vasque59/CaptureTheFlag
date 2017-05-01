@@ -12,6 +12,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     int myTeam;
     String My_name;
     public TextView message;
+    public Flag carrying;
 
     private GoogleMap mMap;
     private LocationManager locationManager = null;
@@ -215,13 +217,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String bestAvailable = locationManager.getBestProvider(criteria, true);
         if (bestAvailable != null) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            99);
+                }
                 return;
             }
             locationManager.requestLocationUpdates(bestAvailable, 500, 1, activeListener);
@@ -263,6 +263,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 player_marker.remove();
             }
             player_marker = addFlag(player,latitude, longitude, myTeam);
+            carrying.setLatitude(latitude);
+            carrying.setLongitude(longitude);
             //If you carry the flag, your position shows to everybody.
         }
     }
@@ -274,6 +276,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(calculateDistanceInMeter(latitude,longitude,blueFlags.get(i).getLatitude(),blueFlags.get(i).getLongitude()) < 120 && !blueFlags.get(i).isCarried() && !blueFlags.get(i).isDelivered() && !carryFlag){
                     carryFlag = true;
                     blueFlags.get(i).setCarried(true);
+                    blueFlags.get(i).setCarriedBy(My_name);
+                    carrying =  blueFlags.get(i);
                     if(player_marker != null)
                         player_marker.remove();
                     if(i == 0 && blue_flag_1_marker != null){
@@ -329,6 +333,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(calculateDistanceInMeter(latitude,longitude,redFlags.get(i).getLatitude(),redFlags.get(i).getLongitude()) < 120 && !redFlags.get(i).isCarried() && !redFlags.get(i).isDelivered() && !carryFlag){
                     carryFlag = true;
                     redFlags.get(i).setCarried(true);
+                    redFlags.get(i).setCarriedBy(My_name);
+                    carrying = redFlags.get(i);
                     if(player_marker != null)
                         player_marker.remove();
                     if(i == 0 && red_flag_1_marker != null){
@@ -437,7 +443,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onBackPressed(){
 
     }
-
     public void onBtnSurrender(final View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
         builder.setTitle(R.string.surrender_btn);
