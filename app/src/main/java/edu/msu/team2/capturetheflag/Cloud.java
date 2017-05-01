@@ -189,7 +189,7 @@ public class Cloud {
             return null;
         } catch (IOException ex) {
             return null;
-        }
+        }//00
     }
 
     public double[] getOpFlag(final String teamID) {
