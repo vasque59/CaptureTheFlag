@@ -248,7 +248,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             player_marker = addFlag(player,latitude, longitude, myTeam);
             carrying.setLatitude(latitude);
             carrying.setLongitude(longitude);
-            cloud.updateFagLoc(String.valueOf(latitude),String.valueOf(longitude),String.valueOf(myTeam));
+            cloud.updateFlagLoc(String.valueOf(latitude),String.valueOf(longitude),String.valueOf(myTeam));
             //If you carry the flag, your position shows to everybody.
         }
     }
