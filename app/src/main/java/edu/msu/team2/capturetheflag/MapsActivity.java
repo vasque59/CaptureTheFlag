@@ -381,7 +381,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             carrying.setLatitude(latitude);
             carrying.setLongitude(longitude);
 
-            cloud.updateFlagLoc(String.valueOf(latitude),String.valueOf(longitude),String.valueOf(myTeam));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    cloud.updateFlagLoc(String.valueOf(latitude),String.valueOf(longitude),String.valueOf(myTeam));
+                }
+
+            }).start();
+
             //If you carry the flag, your position shows to everybody.
         }
     }
@@ -401,6 +408,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 player_marker = addFlag(player,latitude, longitude, myTeam - 1);
                 message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.pick));
+                blueFlags.get(0).setLatitude(latitude);
+                blueFlags.get(0).setLongitude(longitude);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        cloud.updateFlagLoc(String.valueOf(latitude),String.valueOf(longitude),String.valueOf(myTeam));
+                    }
+
+                }).start();
+
             }
                 else if(calculateDistanceInMeter(latitude,longitude,redFlags.get(0).getLatitude(),redFlags.get(0).getLongitude()) < 120 && redFlags.get(0).isCarried() && !redFlags.get(0).isDelivered()){
                     redFlags.get(0).reset();
@@ -413,7 +431,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                     message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.reset));
 
-                    cloud.resetFlag(String.valueOf(latitude), String.valueOf(longitude), "42.721028", "-84.488552", String.valueOf(myTeam));
+
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        cloud.resetFlag(String.valueOf(latitude), String.valueOf(longitude), "42.721028", "-84.488552", String.valueOf(myTeam));
+                    }
+
+                }).start();
+
+
                     //Notify opponent's flag has been reset. Change back his flag icon.
                 }
                 // blue deliver a flag
@@ -426,7 +454,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                     player_marker = addFlag(player,latitude, longitude, myTeam + 1);
                     score ++;
-                    cloud.score(String.valueOf(myTeam));
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            cloud.score(String.valueOf(myTeam));
+                        }
+
+                    }).start();
+
                     blue_flag_marker = addFlag(blue_flag_1,42.734182, -84.482822,myTeam - 1);//union
                     blueFlags.get(0).setCarried(false);
                     blueFlags.get(0).setDelivered(false);
@@ -465,7 +500,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         blue_flag_marker = addFlag(blue_flag_1,42.734182, -84.482822,0);//MSU Union
                     }
                     message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.reset));
-                    cloud.resetFlag(String.valueOf(latitude), String.valueOf(longitude), "42.734182", "-84.482822", String.valueOf(myTeam));
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            cloud.resetFlag(String.valueOf(latitude), String.valueOf(longitude), "42.734182", "-84.482822", String.valueOf(myTeam));
+                        }
+
+                    }).start();
                 }
                 else if(calculateDistanceInMeter(latitude,longitude,42.724934, -84.481098) < 120 && carryFlag && redFlags.get(0).isCarried() && !redFlags.get(0).isDelivered()){
                     carryFlag = false;
@@ -476,7 +517,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                     player_marker = addFlag(player,latitude, longitude, myTeam + 1);
                     score ++;
-                    cloud.score(String.valueOf(myTeam));
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            cloud.score(String.valueOf(myTeam));
+                        }
+
+                    }).start();
+
                     redFlags.get(0).setCarried(false);
                     redFlags.get(0).setDelivered(false);
                     redFlags.get(0).setCarriedBy(null);
@@ -547,6 +596,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 unregisterListeners();
                 finish();
                 System.exit(0);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        cloud.deleteFromCloud();
+                    }
+
+                }).start();
             }
         });
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

@@ -14,7 +14,7 @@
     <string name="Base_pos_btn">Base Position</string>
     <!--Checkboxes-->
     <string name="done_btn">Done</string>
-    <string name="surrender_btn">Surrender</string>
+    <string name="surrender_btn">Quit</string>
     <string name="Red_base">Red Team Base</string>
     <string name="Blue_base">Blue Team Base</string>
     <string name="cong">Congratulation!\u0020</string>
