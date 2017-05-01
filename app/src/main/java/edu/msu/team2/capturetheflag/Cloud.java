@@ -17,6 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 public class Cloud {
 
@@ -51,7 +52,7 @@ public class Cloud {
                 tag != XmlPullParser.END_DOCUMENT);
     }
 
-    public InputStream updateFagLoc(final String lat, final String flong,final String teamID) {
+    public InputStream updateFlagLoc(final String lat, final String flong,final String teamID) {
         // Create a get query
         String query = UPDATE_URL + "?flagLat=" + lat + "&flagLong=" + flong + "&teamid=" + teamID;
 
@@ -98,7 +99,7 @@ public class Cloud {
         }
     }
 
-    public InputStream getPoints(final String teamID) {
+    public int getPoints(final String teamID) {
         // Create a get query
         String query = GETSCORE_URL + "?teamid=" + teamID;
 
@@ -108,17 +109,39 @@ public class Cloud {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             int responseCode = conn.getResponseCode();
             if(responseCode != HttpURLConnection.HTTP_OK) {
-                return null;
+                return -1;
             }
 
-            return conn.getInputStream();
+            InputStream streamer = conn.getInputStream();
+            boolean fail = streamer == null;
+            if(!fail) {
+                try {
+                    XmlPullParser xml = Xml.newPullParser();
+                    xml.setInput(streamer, "UTF-8");
+
+
+                    xml.nextTag();
+                    xml.require(XmlPullParser.START_TAG, null, "game");
+                    String points = xml.getAttributeValue(null, "msg");
+
+                    return Integer.valueOf(points);
+
+
+
+
+                } catch (XmlPullParserException ex) {
+                    fail = true;
+
+                }
+            }
 
         } catch (MalformedURLException e) {
             // Should never happen
-            return null;
+            return -1;
         } catch (IOException ex) {
-            return null;
+            return -1;
         }
+        return -1;
     }
 
 
@@ -169,9 +192,8 @@ public class Cloud {
         }
     }
 
-    public InputStream getOpFlag(final String lat, final String longi,final String resetlat, final String resetlong) {
-        String query = OPFLAG_URL + "?flagLat=" + lat + "&flagLong=" + longi + "&resetFlagLat=" + resetlat + "&resetFlagLong2=" + resetlong;
-
+    public double[] getOpFlag(final String teamID) {
+        String query = OPFLAG_URL + "?teamid=" + teamID;
         try {
             URL url = new URL(query);
 
@@ -181,12 +203,39 @@ public class Cloud {
                 return null;
             }
 
-            return conn.getInputStream();
+            InputStream streamer = conn.getInputStream();
+            boolean fail = streamer == null;
+            if(!fail) {
+                try {
+                    XmlPullParser xml = Xml.newPullParser();
+                    xml.setInput(streamer, "UTF-8");
+
+
+                    xml.nextTag();
+                    xml.require(XmlPullParser.START_TAG, null, "game");
+                    String lat = xml.getAttributeValue(null, "lat");
+                    String long1 = xml.getAttributeValue(null, "long");
+
+                    double [] returner = {Double.valueOf(lat),Double.valueOf(long1)};
+                    return returner;
+
+
+
+
+
+
+                } catch (XmlPullParserException ex) {
+                    fail = true;
+
+                }
+            }
+
         } catch (MalformedURLException e) {
             return null;
         } catch (IOException ex) {
             return null;
         }
+        return null;
     }
 
 

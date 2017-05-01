@@ -62,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
                         String status = xml.getAttributeValue(null, "status");
                         if (status.equals("created user")) {
                             teamID = xml.getAttributeValue(null, "msg");
+                            if(teamID == null){
+                                teamID = "1";
+                            }
                             // gameid = xml.getAttributeValue(null, "id");
                         } else {
                             fail = true;
@@ -108,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void StartGame(final View view, String username, String teamID) {
 
+
         final Intent intent = new Intent(this, MapsActivity.class);
         intent.putExtra("name", username);
         intent.putExtra("teamID", teamID);
@@ -127,12 +131,11 @@ public class MainActivity extends AppCompatActivity {
 
                         xml.nextTag();
                         xml.require(XmlPullParser.START_TAG, null, "game");
-
-
                         String status = xml.getAttributeValue(null, "status");
-                        if (status.equals("created game")) {
+                        if (status.equals("game created")) {
 
                             fail = false;
+                            //stream.close();
                             // teamID = xml.getAttributeValue(null, "msg");
                             // gameid = xml.getAttributeValue(null, "id");
                         } else if (status.equals("game exists")){
@@ -158,12 +161,12 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         if (fail1) {
                             Toast.makeText(view.getContext(),
-                                    R.string.loginfail,
+                                    "unable to create game",
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             // will probably pass coordinates through intent at some point
                             startActivity(intent);
-                            ;
+
                         }
                     }
                 });
