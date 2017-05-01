@@ -99,11 +99,30 @@ public class Cloud {
         }
     }
 
-    public int getPoints(final String teamID) {
+    public InputStream getPoints(final String teamID) {
         // Create a get query
         String query = GETSCORE_URL + "?teamid=" + teamID;
-
         try {
+            URL url = new URL(query);
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            int responseCode = conn.getResponseCode();
+            if(responseCode != HttpURLConnection.HTTP_OK) {
+                return null;
+            }
+
+            return conn.getInputStream();
+
+        } catch (MalformedURLException e) {
+            // Should never happen
+            return null;
+        } catch (IOException ex) {
+            return null;
+        }
+
+    }
+
+/*       try {
             URL url = new URL(query);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -141,10 +160,7 @@ public class Cloud {
         } catch (IOException ex) {
             return -1;
         }
-        return -1;
-    }
-
-
+        return -1;*/
     /**
      * Open a connection to a hatting in the cloud.
      * @return reference to an input stream or null if this fails
@@ -189,12 +205,30 @@ public class Cloud {
             return null;
         } catch (IOException ex) {
             return null;
-        }//00
+        }
     }
 
-    public double[] getOpFlag(final String teamID) {
+    public InputStream getOpFlag(final String teamID) {
         String query = OPFLAG_URL + "?teamid=" + teamID;
         try {
+            URL url = new URL(query);
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            int responseCode = conn.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                return null;
+            }
+
+            return conn.getInputStream();
+        } catch (MalformedURLException e) {
+            return null;
+        } catch (IOException ex) {
+            return null;
+        }
+
+    }
+
+    /*        try {
             URL url = new URL(query);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -236,7 +270,7 @@ public class Cloud {
             return null;
         }
         return null;
-    }
+    }*/
 
 
 

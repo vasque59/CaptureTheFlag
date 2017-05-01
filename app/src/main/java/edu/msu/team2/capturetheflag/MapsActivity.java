@@ -15,9 +15,11 @@ import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Xml;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -28,6 +30,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -42,6 +49,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public TextView message;
     public Flag carrying;
     public int score;
+    public int temp_score;
+    public double temp_lat;
+    public double temp_long;
 
     private GoogleMap mMap;
     private LocationManager locationManager = null;
@@ -227,13 +237,84 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(start) {
             updateFlags();
             detectWin();
-            if(score != cloud.getPoints(String.valueOf(myTeam))){
-                score = cloud.getPoints(String.valueOf(myTeam));
+
+            //final int temp_score;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Cloud cloud = new Cloud();
+                    InputStream stream = cloud.getPoints(String.valueOf(myTeam));
+
+                    boolean fail = stream == null;
+                    if (!fail) {
+                        try {
+                            XmlPullParser xml = Xml.newPullParser();
+                            xml.setInput(stream, "UTF-8");
+
+
+                            xml.nextTag();
+                            xml.require(XmlPullParser.START_TAG, null, "game");
+
+                            String temp = xml.getAttributeValue(null,"msg");
+                            temp_score = Integer.valueOf(temp);
+                        } catch (IOException | XmlPullParserException ex) {
+                            fail = true;
+                        } finally {
+                            try {
+                                stream.close();
+                            } catch (IOException ex) {
+                            }
+                        }
+                    }
+
+                }
+
+            }).start();
+
+
+            if(score != temp_score){
+                score = temp_score;
                 message.setText("Your team just get one point! You are now have " + score + "points." );
             }
+
+
             if(myTeam == 1) {//1 blue
-                double opla = cloud.getOpFlag(String.valueOf(myTeam))[0];
-                double oplo = cloud.getOpFlag(String.valueOf(myTeam))[1];
+                //final int temp_score;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Cloud cloud = new Cloud();
+                        InputStream stream = cloud.getOpFlag("1");
+
+                        boolean fail = stream == null;
+                        if (!fail) {
+                            try {
+                                XmlPullParser xml = Xml.newPullParser();
+                                xml.setInput(stream, "UTF-8");
+
+
+                                xml.nextTag();
+                                xml.require(XmlPullParser.START_TAG, null, "game");
+
+                                temp_lat = Double.valueOf(xml.getAttributeValue(null,"lat"));
+                                temp_long = Double.valueOf(xml.getAttributeValue(null,"long"));
+
+                            } catch (IOException | XmlPullParserException ex) {
+                                fail = true;
+                            } finally {
+                                try {
+                                    stream.close();
+                                } catch (IOException ex) {
+                                }
+                            }
+                        }
+
+                    }
+
+                }).start();
+
+                double opla = temp_lat;
+                double oplo = temp_long;
                 redFlags.get(0).setLatitude(opla);
                 redFlags.get(0).setLongitude(oplo);
                 if(red_flag_marker != null){
@@ -242,8 +323,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 red_flag_marker = addFlag(red_flag_1,opla,oplo,0);
             }
             if(myTeam == 2) {//2 red
-                double opla = cloud.getOpFlag(String.valueOf(myTeam))[0];
-                double oplo = cloud.getOpFlag(String.valueOf(myTeam))[1];
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Cloud cloud = new Cloud();
+                        InputStream stream = cloud.getOpFlag("2");
+
+                        boolean fail = stream == null;
+                        if (!fail) {
+                            try {
+                                XmlPullParser xml = Xml.newPullParser();
+                                xml.setInput(stream, "UTF-8");
+
+
+                                xml.nextTag();
+                                xml.require(XmlPullParser.START_TAG, null, "game");
+
+                                temp_lat = Double.valueOf(xml.getAttributeValue(null,"lat"));
+                                temp_long = Double.valueOf(xml.getAttributeValue(null,"long"));
+
+                            } catch (IOException | XmlPullParserException ex) {
+                                fail = true;
+                            } finally {
+                                try {
+                                    stream.close();
+                                } catch (IOException ex) {
+                                }
+                            }
+                        }
+
+                    }
+
+                }).start();
+                double opla = temp_lat;
+                double oplo = temp_long;
                 blueFlags.get(0).setLatitude(opla);
                 blueFlags.get(0).setLongitude(oplo);
                 if(blue_flag_marker != null){
