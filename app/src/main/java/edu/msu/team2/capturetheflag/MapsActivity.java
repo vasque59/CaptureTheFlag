@@ -278,7 +278,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
 
-            if(myTeam == 1) {//1 blue
+            if(myTeam == 1 && redFlags.get(0).isCarried()) {//1 blue
                 //final int temp_score;
                 new Thread(new Runnable() {
                     @Override
@@ -322,7 +322,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 red_flag_marker = addFlag(red_flag_1,opla,oplo,0);
             }
-            if(myTeam == 2) {//2 red
+            if(myTeam == 2 && blueFlags.get(0).isCarried()) {//2 red
 
                 new Thread(new Runnable() {
                     @Override
@@ -366,6 +366,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 blue_flag_marker = addFlag(blue_flag_1,opla,oplo,0);
             }
         }
+
         if(!carryFlag) {
             if(player_marker != null) {
                 player_marker.remove();
