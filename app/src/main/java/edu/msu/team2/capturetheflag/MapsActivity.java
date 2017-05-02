@@ -250,7 +250,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // show only to yourself your current location
         }
 
-        else if(carryFlag && myTeam == 1 /*&& blue_pick*/) {
+        if(carryFlag && myTeam == 1 && blue_pick) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -270,26 +270,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
 
-            else if(carryFlag && myTeam == 2 /*&& red_pick*/){
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        cloud.updateFlagLoc(String.valueOf(latitude),String.valueOf(longitude),String.valueOf(myTeam));
-                    }
-                }).start();
+        else if(carryFlag && myTeam == 2 && red_pick){
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    cloud.updateFlagLoc(String.valueOf(latitude),String.valueOf(longitude),String.valueOf(myTeam));
+                }
+            }).start();
 
-                if(player_marker != null) {
-                    player_marker.remove();
-                }
-                if(myTeam == 1){
-                    blueFlag.setLatitude(latitude);
-                    blueFlag.setLongitude(longitude);
-                }
-                else if(myTeam == 2){
-                    redFlag.setLatitude(latitude);
-                    redFlag.setLongitude(longitude);
-                }
+            if(player_marker != null) {
+                player_marker.remove();
             }
+            if(myTeam == 1){
+                blueFlag.setLatitude(latitude);
+                blueFlag.setLongitude(longitude);
+            }
+            else if(myTeam == 2){
+                redFlag.setLatitude(latitude);
+                redFlag.setLongitude(longitude);
+            }
+        }
     }
 
     private void updateFlags(){
@@ -417,10 +417,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 redFlag.setLongitude(-84.488552);
                 message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.reset));
 
+
+                /**Todo
+                 ** This reset clear the isPickedUp status but instantly set back to pickedUp. Don't know why.
+                 **/
+
+
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        cloud.resetFlag(String.valueOf(latitude), String.valueOf(longitude), String.valueOf(redFlag.getOriginalLatitude()), String.valueOf(redFlag.getOriginalLongitude()), String.valueOf(1));
+                        cloud.resetFlag(String.valueOf(latitude), String.valueOf(longitude), "42.721028", "-84.488552", String.valueOf(1));
+                    }
+
+                }).start();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        cloud.updateFlagLoc(String.valueOf(42.721028),String.valueOf(-84.488552),String.valueOf(2));
                     }
 
                 }).start();
@@ -428,21 +442,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
 
-
                 //something need to be add to notify the carrier that he got reset.
 
-                    //Notify opponent's flag has been reset. Change back his flag icon.
-                }
+                //Notify opponent's flag has been reset. Change back his flag icon.
+            }
 
-                // blue deliver a flag
-                else if(calculateDistanceInMeter(latitude,longitude,42.731491, -84.495263) < 120 && carryFlag && blueFlag.isCarried() && !blueFlag.isReset()){
-                    carryFlag = false;
-                    blueFlag.setCarried(false);
-                    if(player_marker != null) {
-                        player_marker.remove();
-                    }
-                    player_marker = addFlag(latitude, longitude, myTeam + 1); // draw a person rather than a flag
-                    //score ++;
+            // blue deliver a flag
+            else if(calculateDistanceInMeter(latitude,longitude,42.731491, -84.495263) < 120 && carryFlag && blueFlag.isCarried() && !blueFlag.isReset()){
+                carryFlag = false;
+                blueFlag.setCarried(false);
+                if(player_marker != null) {
+                    player_marker.remove();
+                }
+                player_marker = addFlag(latitude, longitude, myTeam + 1); // draw a person rather than a flag
+                //score ++;
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -454,18 +467,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(blue_flag_marker != null) {
                     blue_flag_marker.remove();
                 }
-                    blue_flag_marker = addFlag(42.734182, -84.482822,myTeam - 1);//union
-                    blueFlag.setCarried(false);
-                    blueFlag.setCarriedBy(null);
-                    blueFlag.reset();
-                    carryFlag = false;
-                    carrying = null;
-                    //blueFlag.setLatitude(42.734182);
-                    //blueFlag.setLongitude(-84.482822);
+                blue_flag_marker = addFlag(42.734182, -84.482822,myTeam - 1);//union
+                blueFlag.setCarried(false);
+                blueFlag.setCarriedBy(null);
+                blueFlag.reset();
+                carryFlag = false;
+                carrying = null;
+                //blueFlag.setLatitude(42.734182);
+                //blueFlag.setLongitude(-84.482822);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        cloud.updateFlagLoc(String.valueOf(42.734182),String.valueOf(-84.482822),String.valueOf(myTeam));
+                        cloud.updateFlagLoc(String.valueOf(42.734182),String.valueOf(-84.482822),String.valueOf(1));
                     }
 
                 }).start();
@@ -481,10 +494,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.deliver) + "\n Your team has " + score + " points, " + String.valueOf(3 - score) + "more points to win");
                 //blue team delivered a flag, reset flag, score ++
-                }
             }
-            //close to blue flag, pick it up
-            //close to red flag, reset it back
+        }
+        //close to blue flag, pick it up
+        //close to red flag, reset it back
         else { // you are red
 
             if(calculateDistanceInMeter(latitude,longitude,redFlag.getLatitude(),redFlag.getLongitude()) < 120 && !redFlag.isCarried() && redFlag.isReset() && !carryFlag && !red_pick){
@@ -533,14 +546,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 //blueFlag.setLongitude(-84.482822);
                 message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.reset));
 
+
+                /**Todo
+                 ** This reset clear the isPickedUp status but instantly set back to pickedUp. Don't know why.
+                 **/
+
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        cloud.resetFlag(String.valueOf(latitude), String.valueOf(longitude), String.valueOf(blueFlag.getOriginalLatitude()), String.valueOf(blueFlag.getOriginalLongitude()), String.valueOf(2));
+                        cloud.resetFlag(String.valueOf(latitude), String.valueOf(longitude), "42.734182", "-84.482822", String.valueOf(2));
                     }
 
                 }).start();
 
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        cloud.updateFlagLoc(String.valueOf(42.734182),String.valueOf(-84.482822),String.valueOf(1));
+                    }
+
+                }).start();
 
 
 
@@ -595,8 +620,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 //red team delivered a flag, reset flag, score ++
             }
         }
-            //close to red flag, pick it up
-            //close to blue flag, reset it back
+        //close to red flag, pick it up
+        //close to blue flag, reset it back
 
     }
 
