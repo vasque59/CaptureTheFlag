@@ -401,7 +401,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
             //reset red
-            else if(calculateDistanceInMeter(latitude,longitude,redFlag.getLatitude(),redFlag.getLongitude()) < 120 && redFlag.isCarried() && !redFlag.isReset() && red_pick){
+            else if(calculateDistanceInMeter(latitude,longitude,redFlag.getLatitude(),redFlag.getLongitude()) < 120 && red_pick){
                 redFlag.reset();
                 if(player_marker != null)
                     player_marker.remove();
@@ -518,7 +518,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
             //reset blue
-            else if(calculateDistanceInMeter(latitude,longitude,blueFlag.getLatitude(),blueFlag.getLongitude()) < 120 && blueFlag.isCarried() && !blueFlag.isReset() && blue_pick){
+            else if(calculateDistanceInMeter(latitude,longitude,blueFlag.getLatitude(),blueFlag.getLongitude()) < 120 && blue_pick){
                 blueFlag.reset();
                 if(player_marker != null)
                     player_marker.remove();
