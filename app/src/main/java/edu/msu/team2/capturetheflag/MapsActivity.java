@@ -641,8 +641,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             redFlag.setLongitude(oplo);
             if(red_flag_marker != null){
                 red_flag_marker.remove();
+                red_flag_marker = addFlag(opla,oplo,1);
             }
-            red_flag_marker = addFlag(opla,oplo,1);
+            else if(red_flag_marker == null){
+                red_flag_marker = addFlag(42.721028, -84.488552,1);
+            }
+
             if(blue_flag_marker != null){
                 blue_flag_marker.remove();
             }
@@ -692,8 +696,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             red_flag_marker = addFlag(redFlag.getLatitude(),redFlag.getLongitude(),1);
             if(blue_flag_marker != null){
                 blue_flag_marker.remove();
+                blue_flag_marker = addFlag(opla,oplo,0);
             }
-            blue_flag_marker = addFlag(opla,oplo,0);
+            else if(blue_flag_marker == null){
+                blue_flag_marker = addFlag(42.734182, -84.482822,0);
+            }
         }
     }
 
