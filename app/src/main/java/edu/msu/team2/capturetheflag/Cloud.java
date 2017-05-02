@@ -29,6 +29,8 @@ public class Cloud {
     private static final String DELETE_URL  = "https://webdev.cse.msu.edu/~vasque59/cse476/project3/game-delete.php";
     private static final String RESET_URL  = "https://webdev.cse.msu.edu/~vasque59/cse476/project3/game-resetflag.php";
     private static final String OPFLAG_URL  = "https://webdev.cse.msu.edu/~vasque59/cse476/project3/game-getopponentsteamflagloc.php";
+    private static final String CKRESET_URK = "https://webdev.cse.msu.edu/~vasque59/cse476/project3/game-getflagpickedup.php";
+    private static final String SETPICKUP_URL =  "http://webdev.cse.msu.edu/~vasque59/cse476/project3/game-pickupflag.php";
     private static final String UTF8 = "UTF-8";
 
     /**
@@ -228,50 +230,6 @@ public class Cloud {
 
     }
 
-    /*        try {
-            URL url = new URL(query);
-
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            int responseCode = conn.getResponseCode();
-            if (responseCode != HttpURLConnection.HTTP_OK) {
-                return null;
-            }
-
-            InputStream streamer = conn.getInputStream();
-            boolean fail = streamer == null;
-            if(!fail) {
-                try {
-                    XmlPullParser xml = Xml.newPullParser();
-                    xml.setInput(streamer, "UTF-8");
-
-
-                    xml.nextTag();
-                    xml.require(XmlPullParser.START_TAG, null, "game");
-                    String lat = xml.getAttributeValue(null, "lat");
-                    String long1 = xml.getAttributeValue(null, "long");
-
-                    double [] returner = {Double.valueOf(lat),Double.valueOf(long1)};
-                    return returner;
-
-
-
-
-
-
-                } catch (XmlPullParserException ex) {
-                    fail = true;
-
-                }
-            }
-
-        } catch (MalformedURLException e) {
-            return null;
-        } catch (IOException ex) {
-            return null;
-        }
-        return null;
-    }*/
-
 
 
     public InputStream initGame(final String lat1, final String long1,final String lat2, final String long2) {
@@ -315,6 +273,52 @@ public class Cloud {
             return null;
         }
     }
+
+
+
+    public InputStream setPickUp(final String teamID) {
+        String query = SETPICKUP_URL + "?teamid=" + teamID;
+        try {
+            URL url = new URL(query);
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            int responseCode = conn.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                return null;
+            }
+
+            return conn.getInputStream();
+        } catch (MalformedURLException e) {
+            return null;
+        } catch (IOException ex) {
+            return null;
+        }
+
+    }
+
+
+    public InputStream getPickUp(final String teamID) {
+        String query = CKRESET_URK + "?teamid=" + teamID;
+        try {
+            URL url = new URL(query);
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            int responseCode = conn.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                return null;
+            }
+
+            return conn.getInputStream();
+        } catch (MalformedURLException e) {
+            return null;
+        } catch (IOException ex) {
+            return null;
+        }
+
+    }
+
+
+
 
 
 }

@@ -10,7 +10,7 @@ public class Flag {
     private double originalLatitude;
     private double originalLongitude;
     private boolean carried = false;
-    private boolean delivered = false;
+    private boolean reset = true;
     private String carriedBy;
 
     public Flag(double la, double lo){
@@ -29,9 +29,7 @@ public class Flag {
     public void setCarried(boolean c){
         carried = c;
     }
-    public void setDelivered(boolean d){
-        delivered = d;
-    }
+
     public double getLatitude() {
         return latitude;
     }
@@ -44,12 +42,17 @@ public class Flag {
         return carried;
     }
 
-    public boolean isDelivered() {
-        return delivered;
+    public boolean isReset() {
+        return reset;
+    }
+
+    public void setReset(boolean b){
+        reset = b;
     }
     public void reset(){
         latitude = originalLatitude;
         longitude = originalLongitude;
+        reset = true;
     }
     public void setCarriedBy(String name){
         carriedBy = name;
