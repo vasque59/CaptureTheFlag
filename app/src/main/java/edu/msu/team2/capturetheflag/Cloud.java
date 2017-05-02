@@ -277,9 +277,6 @@ public class Cloud {
     public InputStream initGame(final String lat1, final String long1,final String lat2, final String long2) {
         String query = INIT_GAME + "?flagLat1=" + lat1 + "&flagLong1=" + long1 + "&flagLat2=" + lat2 + "&flagLong2=" + long2;
 
-        //"http://webdev.cse.msu.edu/~vasque59/cse476/project3/game-creategame.php?flagLat1=1&flagLong1=1&flagLat2=1&flagLong2=1";
-
-        //
 
 
         try {

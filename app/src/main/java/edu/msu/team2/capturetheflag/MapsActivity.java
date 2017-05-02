@@ -55,17 +55,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private LocationManager locationManager = null;
-    private MarkerOptions blue_flag_1 = new MarkerOptions();
-    private MarkerOptions red_flag_1 = new MarkerOptions();
-    private MarkerOptions player = new MarkerOptions();
+
     private Marker blue_flag_marker;
     private Marker red_flag_marker;
     private Marker player_marker;
-    private ArrayList<Flag> blueFlags = new ArrayList<>();
-    private ArrayList<Flag> redFlags = new ArrayList<>();
+
+    private Flag blueFlag;
+    private Flag redFlag;
+
     /**
      * images
-     * final
      * using larger resource and scale the bitmap to make it display more clear.
      * **/
     private Bitmap resizedRedPerson;
@@ -164,17 +163,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-
-        // Add a marker in Sydney and move the camera
         registerListeners();
 
         mMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,longitude) , 14.0f) );
-        blue_flag_marker = addFlag(blue_flag_1,42.734182, -84.482822,0);//MSU Union
-        red_flag_marker = addFlag(red_flag_1,42.721028, -84.488552,1);//Holden Hall
+        blue_flag_marker = addFlag(42.734182, -84.482822,0);//MSU Union
+        red_flag_marker = addFlag(42.721028, -84.488552,1);//Holden Hall
 
-        blueFlags.add(new Flag(42.734182, -84.482822));
-        redFlags.add(new Flag(42.721028, -84.488552));
+        blueFlag = new Flag(42.734182, -84.482822);
+        redFlag = new Flag(42.721028, -84.488552);
 
         start = true;
 
@@ -188,7 +184,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         markerOptions.title(getResources().getString(R.string.Blue_base));
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resizedBlueHome));
         mMap.addMarker(markerOptions);
-
     }
 
     private void registerListeners() {
@@ -234,17 +229,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
     private void updateLocation(){
         mMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,longitude) , 14.0f) );
+
         if(start) {
             updateFlags();
+            drawFlags();
             detectWin();
-            drawOpponent();
         }
 
         if(!carryFlag) {
             if(player_marker != null) {
                 player_marker.remove();
             }
-            player_marker = addFlag(player,latitude, longitude, myTeam + 1);
+            player_marker = addFlag(latitude, longitude, myTeam + 1); //player
             // show only to yourself your current location
         }
         else{
@@ -253,51 +249,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 public void run() {
                     cloud.updateFlagLoc(String.valueOf(latitude),String.valueOf(longitude),String.valueOf(myTeam));
                 }
-
             }).start();
 
             if(player_marker != null) {
                 player_marker.remove();
             }
-            if(myTeam == 1) {//blue
-                player_marker = addFlag(player, latitude, longitude, myTeam - 1);
-                blueFlags.get(0).setLatitude(latitude);
-                blueFlags.get(0).setLongitude(longitude);
+            if(myTeam == 1){
+                blueFlag.setLatitude(latitude);
+                blueFlag.setLongitude(longitude);
             }
             else if(myTeam == 2){
-                player_marker = addFlag(player, latitude, longitude, myTeam - 1);
-                redFlags.get(0).setLatitude(latitude);
-                redFlags.get(0).setLongitude(longitude);
+                redFlag.setLatitude(latitude);
+                redFlag.setLongitude(longitude);
             }
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    cloud.updateFlagLoc(String.valueOf(latitude),String.valueOf(longitude),String.valueOf(myTeam));
-                }
-
-            }).start();
-
+            /*if(myTeam == 1) {//blue
+                player_marker = addFlag( latitude, longitude, myTeam - 1);//qizi
+                blueFlag.setLatitude(latitude);
+                blueFlag.setLongitude(longitude);
+            }
+            else if(myTeam == 2){
+                player_marker = addFlag( latitude, longitude, myTeam - 1);
+                redFlag.setLatitude(latitude);
+                redFlag.setLongitude(longitude);
+            }*/
             //If you carry the flag, your position shows to everybody.
         }
     }
 
     private void updateFlags(){
         if(myTeam == 1){  //blue
-            if(calculateDistanceInMeter(latitude,longitude,blueFlags.get(0).getLatitude(),blueFlags.get(0).getLongitude()) < 120 && !blueFlags.get(0).isCarried() && !blueFlags.get(0).isDelivered() && !carryFlag){
+            if(calculateDistanceInMeter(latitude,longitude,blueFlag.getLatitude(),blueFlag.getLongitude()) < 120 && !blueFlag.isCarried() && !blueFlag.isDelivered() && !carryFlag){
                 carryFlag = true;
-                blueFlags.get(0).setCarried(true);
-                blueFlags.get(0).setCarriedBy(My_name);
-                carrying =  blueFlags.get(0);
+                blueFlag.setCarried(true);
+                blueFlag.setCarriedBy(My_name);
+                carrying =  blueFlag;
                 if(player_marker != null)
                     player_marker.remove();
-                if(blue_flag_marker != null){
-                    blue_flag_marker.remove();
-                }
-                player_marker = addFlag(player,latitude, longitude, myTeam - 1);
                 message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.pick));
-                blueFlags.get(0).setLatitude(latitude);
-                blueFlags.get(0).setLongitude(longitude);
+                blueFlag.setLatitude(latitude);
+                blueFlag.setLongitude(longitude);
 
                 new Thread(new Runnable() {
                     @Override
@@ -308,18 +298,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }).start();
 
             }
-                else if(calculateDistanceInMeter(latitude,longitude,redFlags.get(0).getLatitude(),redFlags.get(0).getLongitude()) < 120 && redFlags.get(0).isCarried() && !redFlags.get(0).isDelivered()){
-                    redFlags.get(0).reset();
-                    if(player_marker != null)
-                        player_marker.remove();
-                    player_marker = addFlag(player,latitude, longitude, myTeam + 1);
-                    if(red_flag_marker != null){
-                        red_flag_marker.remove();
-                        red_flag_marker = addFlag(red_flag_1,42.721028, -84.488552,0);//holden
-                    }
-                    message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.reset));
-
-
+            else if(calculateDistanceInMeter(latitude,longitude,redFlag.getLatitude(),redFlag.getLongitude()) < 120 && redFlag.isCarried() && !redFlag.isDelivered()){
+                redFlag.reset();
+                if(player_marker != null)
+                    player_marker.remove();
+                player_marker = addFlag(latitude, longitude, myTeam + 1);
+                if(red_flag_marker != null) {
+                    red_flag_marker.remove();
+                }
+                if(red_flag_marker != null) {
+                    red_flag_marker.remove();
+                }
+                red_flag_marker = addFlag(42.721028, -84.488552,1);//holden
+                redFlag.setLatitude(42.721028);
+                redFlag.setLongitude(-84.488552);
+                message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.reset));
 
                 new Thread(new Runnable() {
                     @Override
@@ -330,104 +323,143 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }).start();
 
 
+
+
+                //something need to be add to notify the carrier that he got reset.
+
                     //Notify opponent's flag has been reset. Change back his flag icon.
                 }
                 // blue deliver a flag
-                else if(calculateDistanceInMeter(latitude,longitude,42.731491, -84.495263) < 120 && carryFlag && blueFlags.get(0).isCarried() && !blueFlags.get(0).isDelivered()){
+                else if(calculateDistanceInMeter(latitude,longitude,42.731491, -84.495263) < 120 && carryFlag && blueFlag.isCarried() && !blueFlag.isDelivered()){
                     carryFlag = false;
-                    blueFlags.get(0).setCarried(false);
-                    blueFlags.get(0).setDelivered(true);
+                    blueFlag.setCarried(false);
                     if(player_marker != null) {
                         player_marker.remove();
                     }
-                    player_marker = addFlag(player,latitude, longitude, myTeam + 1);
+                    player_marker = addFlag(latitude, longitude, myTeam + 1); // draw a person rather than a flag
                     score ++;
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            cloud.score(String.valueOf(myTeam));
-                        }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        cloud.score(String.valueOf(myTeam));
+                    }
 
-                    }).start();
+                }).start();
 
-                    blue_flag_marker = addFlag(blue_flag_1,42.734182, -84.482822,myTeam - 1);//union
-                    blueFlags.get(0).setCarried(false);
-                    blueFlags.get(0).setDelivered(false);
-                    blueFlags.get(0).setCarriedBy(null);
+                if(blue_flag_marker != null) {
+                    blue_flag_marker.remove();
+                }
+                    blue_flag_marker = addFlag(42.734182, -84.482822,myTeam - 1);//union
+                    blueFlag.setCarried(false);
+                    blueFlag.setCarriedBy(null);
                     carryFlag = false;
                     carrying = null;
-                    blueFlags.get(0).setLatitude(42.734182);
-                    blueFlags.get(0).setLongitude(-84.482822);
+                    blueFlag.setLatitude(42.734182);
+                    blueFlag.setLongitude(-84.482822);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        cloud.updateFlagLoc(String.valueOf(42.734182),String.valueOf(-84.482822),String.valueOf(myTeam));
+                    }
+
+                }).start();
                     message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.deliver) + "\n Your team has " + score + " points, " + String.valueOf(3 - score) + "more points to win");
+                //blue team delivered a flag, reset flag, score ++
                 }
             }
             //close to blue flag, pick it up
             //close to red flag, reset it back
-        else{ // you are red
-                if(calculateDistanceInMeter(latitude,longitude,redFlags.get(0).getLatitude(),redFlags.get(0).getLongitude()) < 120 && !redFlags.get(0).isCarried() && !redFlags.get(0).isDelivered() && !carryFlag){
-                    carryFlag = true;
-                    redFlags.get(0).setCarried(true);
-                    redFlags.get(0).setCarriedBy(My_name);
-                    carrying = redFlags.get(0);
-                    if(player_marker != null)
-                        player_marker.remove();
-                    if(red_flag_marker != null) {
-                        red_flag_marker.remove();
+        else { // you are red
+            if(calculateDistanceInMeter(latitude,longitude,redFlag.getLatitude(),redFlag.getLongitude()) < 120 && !redFlag.isCarried() && !redFlag.isDelivered() && !carryFlag){
+                carryFlag = true;
+                redFlag.setCarried(true);
+                redFlag.setCarriedBy(My_name);
+                carrying =  redFlag;
+                if(player_marker != null)
+                    player_marker.remove();
+                message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.pick));
+                redFlag.setLatitude(latitude);
+                redFlag.setLongitude(longitude);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        cloud.updateFlagLoc(String.valueOf(latitude),String.valueOf(longitude),String.valueOf(myTeam));
                     }
-                    player_marker = addFlag(player,latitude, longitude, myTeam - 1);
-                    message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.pick));
-                }
-                else if(calculateDistanceInMeter(latitude,longitude,blueFlags.get(0).getLatitude(),blueFlags.get(0).getLongitude()) < 120 && blueFlags.get(0).isCarried() && !blueFlags.get(0).isDelivered()){
-                    blueFlags.get(0).reset();
-                    //Notify opponent's flag has been reset. Change back his flag icon.
-                    if(player_marker != null)
-                        player_marker.remove();
-                    player_marker = addFlag(player,latitude, longitude, myTeam + 1);
-                    if(blue_flag_marker != null){
-                        blue_flag_marker.remove();
-                        blue_flag_marker = addFlag(blue_flag_1,42.734182, -84.482822,0);//MSU Union
-                    }
-                    message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.reset));
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            cloud.resetFlag(String.valueOf(latitude), String.valueOf(longitude), "42.734182", "-84.482822", String.valueOf(myTeam));
-                        }
 
-                    }).start();
-                }
-                else if(calculateDistanceInMeter(latitude,longitude,42.724934, -84.481098) < 120 && carryFlag && redFlags.get(0).isCarried() && !redFlags.get(0).isDelivered()){
-                    carryFlag = false;
-                    redFlags.get(0).setCarried(false);
-                    redFlags.get(0).setDelivered(true);
-                    if(player_marker != null) {
-                        player_marker.remove();
-                    }
-                    player_marker = addFlag(player,latitude, longitude, myTeam + 1);
-                    score ++;
+                }).start();
 
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            cloud.score(String.valueOf(myTeam));
-                        }
-
-                    }).start();
-
-                    redFlags.get(0).setCarried(false);
-                    redFlags.get(0).setDelivered(false);
-                    redFlags.get(0).setCarriedBy(null);
-                    carryFlag = false;
-                    carrying = null;
-                    red_flag_marker = addFlag(red_flag_1,42.721028, -84.488552,myTeam - 1);//holden
-                    redFlags.get(0).setLatitude(42.721028);
-                    redFlags.get(0).setLongitude(-84.488552);
-                    message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.deliver)+ "\n Your team has " + score + " points, " + String.valueOf(3 - score) + "more points to win");
-                }
             }
+            else if(calculateDistanceInMeter(latitude,longitude,blueFlag.getLatitude(),blueFlag.getLongitude()) < 120 && blueFlag.isCarried() && !blueFlag.isDelivered()){
+                blueFlag.reset();
+                if(player_marker != null)
+                    player_marker.remove();
+                player_marker = addFlag(latitude, longitude, myTeam + 1);
+
+                if(blue_flag_marker != null) {
+                    blue_flag_marker.remove();
+                }
+                blue_flag_marker = addFlag(42.734182, -84.482822,0);//MSU Union
+                blueFlag.setLatitude(42.734182);//
+                blueFlag.setLongitude(-84.482822);
+                message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.reset));
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        cloud.resetFlag(String.valueOf(latitude), String.valueOf(longitude), "42.734182", "-84.482822", String.valueOf(myTeam));
+                    }
+
+                }).start();
+
+
+
+
+                //something need to be add to notify the carrier that he got reset.
+
+                //Notify opponent's flag has been reset. Change back his flag icon.
+            }
+            // red deliver a flag
+            else if(calculateDistanceInMeter(latitude,longitude,42.724934, -84.481098) < 120 && carryFlag && redFlag.isCarried() && !blueFlag.isDelivered()){
+                carryFlag = false;
+                redFlag.setCarried(false);
+                if(player_marker != null) {
+                    player_marker.remove();
+                }
+                player_marker = addFlag(latitude, longitude, myTeam + 1); // draw a person rather than a flag
+                score ++;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        cloud.score(String.valueOf(myTeam));
+                    }
+
+                }).start();
+
+                if(red_flag_marker != null)
+                    red_flag_marker.remove();
+                red_flag_marker = addFlag(42.721028, -84.488552,myTeam-1);//Holden Hall
+                redFlag.setCarried(false);
+                redFlag.setCarriedBy(null);
+                carryFlag = false;
+                carrying = null;
+                redFlag.setLatitude(42.721028);
+                redFlag.setLongitude(-84.488552);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        cloud.updateFlagLoc(String.valueOf(42.721028),String.valueOf(-84.488552),String.valueOf(myTeam));
+                    }
+
+                }).start();
+
+                message.setText(getResources().getString(R.string.cong)+ My_name + getResources().getString(R.string.deliver) + "\n Your team has " + score + " points, " + String.valueOf(3 - score) + "more points to win");
+                //red team delivered a flag, reset flag, score ++
+            }
+        }
             //close to red flag, pick it up
             //close to blue flag, reset it back
-
 
     }
 
@@ -449,7 +481,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * 2 means blue team player
      * 3 means red team player
      * **/
-    private Marker addFlag(MarkerOptions flag, double la, double lon, int color){
+    private Marker addFlag(double la, double lon, int color){
+        MarkerOptions flag = new MarkerOptions();
         flag.position(new LatLng(la,lon));
         if(color == 0) {
             flag.title(getResources().getString(R.string.blueFlag));
@@ -482,8 +515,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 unregisterListeners();
-                finish();
-                System.exit(0);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -491,6 +522,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
 
                 }).start();
+                finish();
+                System.exit(0);
             }
         });
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -527,7 +560,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return (AVERAGE_RADIUS_OF_EARTH_KM * c) * 1000;
     }
 
-    private void drawOpponent(){
+    private void drawFlags(){
 
         new Thread(new Runnable() {
             @Override
@@ -561,12 +594,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         }).start();
         // pulling points;
-
-
-        if(score != temp_score){
-            score = temp_score;
-            message.setText("Your team just get one point! You are now have " + score + "points." );
-        }
+        //if(score != temp_score){
+            //score = temp_score;
+            message.setText("Your team just get one point! You are now have " + String.valueOf(score) + " points." );
+        //}
 
 
 
@@ -606,12 +637,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             double opla = temp_lat;
             double oplo = temp_long;
-            redFlags.get(0).setLatitude(opla);
-            redFlags.get(0).setLongitude(oplo);
+            redFlag.setLatitude(opla);
+            redFlag.setLongitude(oplo);
             if(red_flag_marker != null){
                 red_flag_marker.remove();
             }
-            red_flag_marker = addFlag(red_flag_1,opla,oplo,0);
+            red_flag_marker = addFlag(opla,oplo,1);
+            if(blue_flag_marker != null){
+                blue_flag_marker.remove();
+            }
+            blue_flag_marker = addFlag(blueFlag.getLatitude(),blueFlag.getLongitude(),0);
         }
         if(myTeam == 2) {//2 red
 
@@ -649,12 +684,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }).start();
             double opla = temp_lat;
             double oplo = temp_long;
-            blueFlags.get(0).setLatitude(opla);
-            blueFlags.get(0).setLongitude(oplo);
+            blueFlag.setLatitude(opla);
+            blueFlag.setLongitude(oplo);
+            if(red_flag_marker != null){
+                red_flag_marker.remove();
+            }
+            red_flag_marker = addFlag(redFlag.getLatitude(),redFlag.getLongitude(),1);
             if(blue_flag_marker != null){
                 blue_flag_marker.remove();
             }
-            blue_flag_marker = addFlag(blue_flag_1,opla,oplo,0);
+            blue_flag_marker = addFlag(opla,oplo,0);
         }
     }
 
