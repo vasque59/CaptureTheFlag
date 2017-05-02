@@ -61,4 +61,10 @@ public class Flag {
         return carriedBy;
     }
 
+    public double getOriginalLatitude(){
+        return originalLatitude;
+    }
+    public double getOriginalLongitude(){
+        return originalLongitude;
+    }
 }

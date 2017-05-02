@@ -247,27 +247,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             player_marker = addFlag(latitude, longitude, myTeam + 1); //player
             // show only to yourself your current location
         }
-        else if(carryFlag && myTeam == 1 /*&& blue_pick*/) {
+
+        else if(carryFlag && myTeam == 1 && blue_pick) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    cloud.updateFlagLoc(String.valueOf(latitude),String.valueOf(longitude),String.valueOf(myTeam));
+                    cloud.updateFlagLoc(String.valueOf(latitude), String.valueOf(longitude), String.valueOf(myTeam));
                 }
             }).start();
 
-            if(player_marker != null) {
+            if (player_marker != null) {
                 player_marker.remove();
             }
-            if(myTeam == 1){
+            if (myTeam == 1) {
                 blueFlag.setLatitude(latitude);
                 blueFlag.setLongitude(longitude);
-            }
-            else if(myTeam == 2){
+            } else if (myTeam == 2) {
                 redFlag.setLatitude(latitude);
                 redFlag.setLongitude(longitude);
             }
+        }
 
-            else if(carryFlag && myTeam == 2 /*&& red_pick*/){
+            else if(carryFlag && myTeam == 2 && red_pick){
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -287,15 +288,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     redFlag.setLongitude(longitude);
                 }
             }
-        }
     }
 
     private void updateFlags(){
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Cloud cloud = new Cloud();
-                InputStream stream = cloud.setPickUp(String.valueOf(1));
+                InputStream stream = cloud.getPickUp(String.valueOf(1));
 
                 boolean fail = stream == null;
                 if (!fail) {
@@ -332,8 +331,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Cloud cloud = new Cloud();
-                InputStream stream = cloud.setPickUp(String.valueOf(1));
+                InputStream stream = cloud.getPickUp(String.valueOf(1));
 
                 boolean fail = stream == null;
                 if (!fail) {
@@ -368,6 +366,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
 
+
         if(myTeam == 1){  //blue
 
             if(calculateDistanceInMeter(latitude,longitude,blueFlag.getLatitude(),blueFlag.getLongitude()) < 120 && !blueFlag.isCarried() && blueFlag.isReset() && !carryFlag && !blue_pick){
@@ -378,7 +377,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        cloud.setPickUp(String.valueOf(myTeam + 1));
+                        cloud.setPickUp(String.valueOf(myTeam));
                     }
 
                 }).start();
@@ -399,6 +398,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }).start();
 
             }
+            //reset red
             else if(calculateDistanceInMeter(latitude,longitude,redFlag.getLatitude(),redFlag.getLongitude()) < 120 && redFlag.isCarried() && !redFlag.isReset() && red_pick){
                 redFlag.reset();
                 if(player_marker != null)
@@ -418,7 +418,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        cloud.resetFlag(String.valueOf(latitude), String.valueOf(longitude), "42.721028", "-84.488552", String.valueOf(myTeam));
+                        cloud.resetFlag(String.valueOf(latitude), String.valueOf(longitude), "42.721028", "-84.488552", String.valueOf(1));
                     }
 
                 }).start();
@@ -470,7 +470,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        cloud.resetFlag(String.valueOf(latitude), String.valueOf(longitude), "42.734182", "-84.482822", String.valueOf(1));
+                        cloud.resetFlag(String.valueOf(latitude), String.valueOf(longitude), "42.734182", "-84.482822", String.valueOf(2));
                     }
 
                 }).start();
@@ -483,8 +483,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //close to blue flag, pick it up
             //close to red flag, reset it back
         else { // you are red
-
-
 
             if(calculateDistanceInMeter(latitude,longitude,redFlag.getLatitude(),redFlag.getLongitude()) < 120 && !redFlag.isCarried() && redFlag.isReset() && !carryFlag && !red_pick){
                 carryFlag = true;
@@ -501,7 +499,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        cloud.setPickUp(String.valueOf(myTeam + 1));
+                        cloud.setPickUp(String.valueOf(myTeam));
                     }
 
                 }).start();
@@ -535,7 +533,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        cloud.resetFlag(String.valueOf(latitude), String.valueOf(longitude), "42.734182", "-84.482822", String.valueOf(1));
+                        cloud.resetFlag(String.valueOf(latitude), String.valueOf(longitude), String.valueOf(blueFlag.getOriginalLatitude()), String.valueOf(blueFlag.getOriginalLongitude()), String.valueOf(2));
                     }
 
                 }).start();
@@ -586,7 +584,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        cloud.resetFlag(String.valueOf(latitude), String.valueOf(longitude), "42.721028", "-84.488552", String.valueOf(2));
+                        cloud.resetFlag(String.valueOf(latitude), String.valueOf(longitude), "42.721028", "-84.488552", String.valueOf(1));
                     }
 
                 }).start();
