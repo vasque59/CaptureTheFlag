@@ -331,7 +331,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         new Thread(new Runnable() {
             @Override
             public void run() {
-                InputStream stream = cloud.getPickUp(String.valueOf(1));
+                InputStream stream = cloud.getPickUp(String.valueOf(2));
 
                 boolean fail = stream == null;
                 if (!fail) {
