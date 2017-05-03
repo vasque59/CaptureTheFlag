@@ -7,13 +7,20 @@ When you have completed the project, complete the following form and include it 
 
 Project Name:  Capture The Flag - Team 2
 
-Project Description:  (please enter)
+Project Description:  
 
-Video Link:  (please enter)
+Players join the game and are assigned a team
+Your goal is to pick up your flag and return it to your base
+When you get to your base you score a point
+A team wins when they score 3 points
+If you get within 10m of your opponent who’s carrying a flag, you reset it
+
+
+Video Link:  tianyi.li/Full.mp4
 
 Member 1: Tianyi Li
 
-Responsiblity: In charge of the logic in local game. Writing the MapsActivity and layout. Editing videos. Debug errors locally and on cloud.
+Responsiblity: In charge of the logic in local game. Writing the MapsActivity, Flag class and layout. Editing videos. Debug errors locally and on cloud.
 
 
 Member 2: 

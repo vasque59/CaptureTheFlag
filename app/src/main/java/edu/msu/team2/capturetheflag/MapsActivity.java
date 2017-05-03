@@ -834,7 +834,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }).start();
 
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Cloud cloud = new Cloud();
+                    InputStream stream = cloud.getOpFlag("2");
 
+                    boolean fail = stream == null;
+                    if (!fail) {
+                        try {
+                            XmlPullParser xml = Xml.newPullParser();
+                            xml.setInput(stream, "UTF-8");
+
+
+                            xml.nextTag();
+                            xml.require(XmlPullParser.START_TAG, null, "game");
+
+                            blue_lat = Double.valueOf(xml.getAttributeValue(null,"lat"));
+                            blue_long = Double.valueOf(xml.getAttributeValue(null,"long"));
+
+                        } catch (IOException | XmlPullParserException ex) {
+                            fail = true;
+                        } finally {
+                            try {
+                                stream.close();
+                            } catch (IOException ex) {
+                            }
+                        }
+                    }
+
+                }
+
+            }).start();
+
+
+
+            blueFlag.setLatitude(blue_lat);
+            blueFlag.setLongitude(blue_long);
             redFlag.setLatitude(red_lat);
             redFlag.setLongitude(red_long);
             if(red_flag_marker != null){
@@ -885,6 +921,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }).start();
 
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Cloud cloud = new Cloud();
+                    InputStream stream = cloud.getOpFlag("1");
+
+                    boolean fail = stream == null;
+                    if (!fail) {
+                        try {
+                            XmlPullParser xml = Xml.newPullParser();
+                            xml.setInput(stream, "UTF-8");
+
+
+                            xml.nextTag();
+                            xml.require(XmlPullParser.START_TAG, null, "game");
+
+                            red_lat = Double.valueOf(xml.getAttributeValue(null,"lat"));
+                            red_long = Double.valueOf(xml.getAttributeValue(null,"long"));
+
+                        } catch (IOException | XmlPullParserException ex) {
+                            fail = true;
+                        } finally {
+                            try {
+                                stream.close();
+                            } catch (IOException ex) {
+                            }
+                        }
+                    }
+
+                }
+            }).start();
+
+            redFlag.setLatitude(red_lat);
+            redFlag.setLongitude(red_long);
             blueFlag.setLatitude(blue_lat);
             blueFlag.setLongitude(blue_long);
             if(red_flag_marker != null){
