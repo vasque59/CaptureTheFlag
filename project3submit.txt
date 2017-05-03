@@ -28,6 +28,6 @@ Member 2: Josh Benner
 Responsiblity: Designed database schema, and game flow. Built all of the PHP API Backend. 
 
 
-Member 3: 
+Member 3: Edward Vasquez
 
-Responsiblity:
+Responsiblity: Set up project and Git as well as created Cloud class and handled creating and using threads within project.
