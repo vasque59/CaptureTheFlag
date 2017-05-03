@@ -23,25 +23,11 @@ Member 1: Tianyi Li
 Responsiblity: In charge of the logic in local game. Writing the MapsActivity, Flag class and layout. Editing videos. Debug errors locally and on cloud.
 
 
-Member 2: 
+Member 2: Josh Benner
 
-Responsiblity:
-
+Responsiblity: Designed database schema, and game flow. Built all of the PHP API Backend. 
 
 
 Member 3: 
 
 Responsiblity:
-
-
-
-Member 4: 
-
-Responsiblity:
-
-
-
-Member 5: 
-
-Responsiblity:
-
